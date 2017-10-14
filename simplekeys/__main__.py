@@ -176,7 +176,7 @@ class Application(object):
             logging.info('Selecting keyboard %s', new_keyboard['name'])
             self.keyboard = new_keyboard
             self.icon.set_from_file(
-                os.path.join(ICON_DIR, new_keyboard['icon']))
+                self.get_file_path(os.path.join('icons', new_keyboard['icon'])))
             self.load_keyboard(new_keyboard)
 
     def load_keyboard(self, keyboard):
