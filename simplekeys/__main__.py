@@ -6,8 +6,8 @@ import time
 import sys
 import argparse
 import subprocess
-from daemonize import Daemonize
 
+from daemonize import Daemonize
 import yaml
 import gi
 gi.require_version("Gtk", "3.0")

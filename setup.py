@@ -11,7 +11,7 @@ setup(
     author='Shane Breatnach',
     author_email='shane.breatnach@gmail.com',
     keywords='setxkbmap keyboard keyboards layout linux openbox',
-    install_requires=['PyYAML'],
+    install_requires=['PyYAML>=3.12', 'daemonize>=2.4.7', 'pygobject>=3.20'],
     python_requires='~=3.3',
     entry_points={
         'console_scripts': [
