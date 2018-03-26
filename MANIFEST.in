@@ -1,0 +1,2 @@
+recursive-include simplekeys/icons *.png
+include simplekeys/default.yml

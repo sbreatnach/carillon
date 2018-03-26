@@ -3,19 +3,23 @@
 from distutils.core import setup
 
 setup(
-    name='SimpleKeys',
-    version='0.0.1',
+    name='Carillon',
+    version='1.0.0',
     description='Ultra simple keyboard layout controller',
-    url='https://github.com/sbreatnach/simplekeys',
+    url='https://github.com/sbreatnach/carillon',
     license='MIT',
     author='Shane Breatnach',
     author_email='shane.breatnach@gmail.com',
-    keywords='setxkbmap keyboard keyboards layout linux openbox',
-    install_requires=['PyYAML>=3.12', 'daemonize>=2.4.7', 'pygobject>=3.20'],
+    packages=['carillon'],
+    keywords='carillon setxkbmap keyboard keyboards layout linux openbox',
+    install_requires=[
+        'PyYAML>=3.12',
+        'pygobject>=3.20'
+    ],
     python_requires='~=3.3',
     entry_points={
         'console_scripts': [
-            'simplekeys=simplekeys:main'
+            'carillon=carillon:main'
         ]
     }
 )

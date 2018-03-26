@@ -7,15 +7,14 @@ import sys
 import argparse
 import subprocess
 
-from daemonize import Daemonize
 import yaml
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-ETC_ROOT = os.path.join('/', 'etc', 'simplekeys')
+ETC_ROOT = os.path.join('/', 'etc', 'carillon')
 CONFIG_ROOT = os.path.join(ETC_ROOT, 'conf.d')
-USER_CONFIG = os.path.join('~', '.config', 'simplekeys')
+USER_CONFIG = os.path.join('~', '.config', 'carillon')
 SRC_ROOT = os.path.dirname(__file__)
 WORKING_ROOT = os.getcwd()
 ICON_DIR = os.path.join(SRC_ROOT, 'icons')
@@ -33,7 +32,7 @@ logging.config.dictConfig({
             'level': 'DEBUG',
             'formatter': 'standard',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/simplekeys.log',
+            'filename': '/var/log/carillon.log',
             'maxBytes': 1024000,
             'backupCount': 3
         },
@@ -116,9 +115,9 @@ class Application(object):
         These are:
 
         * current working directory
-        * XDG config directory e.g. ~/.config/simplekeys
-        * /etc/simplekeys/conf.d
-        * /etc/simplekeys
+        * XDG config directory e.g. ~/.config/carillon
+        * /etc/carillon/conf.d
+        * /etc/carillon
         * directory of package install
 
         :param filename:
@@ -218,9 +217,7 @@ def main():
     logging.info('Starting up')
     parser = argparse.ArgumentParser(
         description='Application to manage keyboard layouts')
-    parser.add_argument('-d', '--daemonize', action='store_true')
     parser.add_argument('-c', '--config-file', default='default.yml')
-    parser.add_argument('-p', '--pid-file', default='simplekeys.pid')
     args = parser.parse_args()
 
     program = Application()
@@ -229,13 +226,7 @@ def main():
     signal.signal(signal.SIGINT, shutdown_handler)
 
     program.load(args.config_file)
-    if args.daemonize:
-        # FIXME: this doesn't work but fails silently! Gtk issues?
-        # if using file logging, pass in keep_fds option
-        daemon = Daemonize(app='simplekeys', pid=args.pid_file, action=program.run)
-        daemon.start()
-    else:
-        program.run()
+    program.run()
 
 
 if __name__ == '__main__':

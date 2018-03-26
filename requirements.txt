@@ -2,4 +2,3 @@ wheel
 twine
 PyYAML==3.12
 pygobject==3.20.0
-daemonize==2.4.7
