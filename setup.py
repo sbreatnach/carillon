@@ -21,7 +21,8 @@ setup(
     description='Ultra simple keyboard layout controller',
     long_description=long_description,
     url='https://github.com/sbreatnach/carillon',
-    download_url = 'https://github.com/sbreatnach/carillon/archive/1.0.0.tar.gz',
+    download_url = 'https://github.com/sbreatnach/carillon/archive/{}.tar.gz'.
+        format(__version__),
     license='MIT',
     author='Shane Breatnach',
     author_email='shane.breatnach@gmail.com',
