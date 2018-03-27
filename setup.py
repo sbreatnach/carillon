@@ -34,7 +34,7 @@ setup(
     python_requires='~=3.3',
     entry_points={
         'console_scripts': [
-            'carillon=carillon:main'
+            'carillon=carillon.__main__:main'
         ]
     },
     classifiers=[
