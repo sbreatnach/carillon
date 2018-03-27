@@ -32,7 +32,7 @@ logging.config.dictConfig({
             'level': 'DEBUG',
             'formatter': 'standard',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/carillon.log',
+            'filename': '/tmp/carillon.log',
             'maxBytes': 1024000,
             'backupCount': 3
         },
@@ -81,6 +81,11 @@ class Application(object):
         selected_keyboard = keyboards[selected]
 
         self.all_keyboards = keyboards
+        menu_item = Gtk.MenuItem()
+        menu_item.set_label('Quit')
+        menu_item.connect('activate', self.shutdown)
+        self.menu.append(menu_item)
+        self.menu.show_all()
         self.set_keyboard(selected_keyboard)
 
     def on_popup_menu(self, icon, button, time):
@@ -163,7 +168,6 @@ class Application(object):
                     functools.partial(self.set_keyboard, keyboard)
                 )
                 self.menu.append(menu_item)
-            self.menu.show_all()
 
     def set_keyboard(self, new_keyboard, *args):
         """
@@ -184,7 +188,7 @@ class Application(object):
         :param keyboard:
         """
         # uses setxkbmap which is as reliable as it gets for
-        # setting keyboard layout in an X client environment
+        # setting keyboard layout in an X client/server environment
         set_args = ['setxkbmap',
                     '-model', keyboard['model'],
                     '-layout', keyboard['layout']]
@@ -193,7 +197,14 @@ class Application(object):
             set_args += ['-variant', variant]
         subprocess.check_call(set_args)
 
-    def run(self):
+    def shutdown(self, *args):
+        """
+        Shuts down the application thread
+        """
+        logging.info('Shutting down')
+        self.is_running = False
+
+    def run(self, *args):
         """
         Runs the application, managing the main loop
         """
@@ -201,16 +212,6 @@ class Application(object):
         while self.is_running:
             time.sleep(0.01)
             Gtk.main_iteration()
-
-
-def on_shutdown(program, *args):
-    """
-    Shuts down the application
-    :param program:
-    :param args:
-    """
-    logging.info('Shutting down')
-    program.is_running = False
 
 
 def main():
@@ -221,9 +222,8 @@ def main():
     args = parser.parse_args()
 
     program = Application()
-    shutdown_handler = functools.partial(on_shutdown, program)
-    signal.signal(signal.SIGTERM, shutdown_handler)
-    signal.signal(signal.SIGINT, shutdown_handler)
+    signal.signal(signal.SIGTERM, program.shutdown)
+    signal.signal(signal.SIGINT, program.shutdown)
 
     program.load(args.config_file)
     program.run()

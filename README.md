@@ -1,5 +1,9 @@
 # Carillon
 
+See PROJECT.rst for basic description and usage
+
+# Development
+
 ## Installation
 
     pip3 install -r requirements.txt
