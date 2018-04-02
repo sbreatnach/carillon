@@ -6,6 +6,9 @@ See PROJECT.rst for basic description and usage
 
 ## Installation
 
+Install library files first, then pip install:
+
+    sudo apt install libgirepository1.0-dev libcairo2-dev python-dev
     pip3 install -r requirements.txt
 
 ## Testing

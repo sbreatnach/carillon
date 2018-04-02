@@ -14,41 +14,9 @@ from gi.repository import Gtk
 
 ETC_ROOT = os.path.join('/', 'etc', 'carillon')
 CONFIG_ROOT = os.path.join(ETC_ROOT, 'conf.d')
-USER_CONFIG = os.path.join('~', '.config', 'carillon')
+USER_CONFIG = os.path.join(os.path.expanduser('~'), '.config', 'carillon')
 SRC_ROOT = os.path.dirname(__file__)
 WORKING_ROOT = os.getcwd()
-ICON_DIR = os.path.join(SRC_ROOT, 'icons')
-
-logging.config.dictConfig({
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-        },
-    },
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'formatter': 'standard',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/tmp/carillon.log',
-            'maxBytes': 1024000,
-            'backupCount': 3
-        },
-        'console': {
-            'level': 'INFO',
-            'formatter': 'standard',
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        '': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO'
-        }
-    }
-})
 
 
 class Application(object):
@@ -76,6 +44,41 @@ class Application(object):
         config_file_path = self.get_file_path(config_filename)
         with open(config_file_path) as handle:
             config_data = yaml.load(handle)
+
+        configured_logging = config_data.get('logging', {})
+        logging_conf = {
+            'version': 1,
+            'disable_existing_loggers': False,
+            'formatters': {
+                'standard': {
+                    'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+                },
+            },
+            'handlers': {
+                'file': {
+                    'level': 'DEBUG',
+                    'formatter': 'standard',
+                    'class': 'logging.handlers.RotatingFileHandler',
+                    'filename': configured_logging.get('file_path',
+                                                       '/tmp/carillon.log'),
+                    'maxBytes': 1024000,
+                    'backupCount': 3
+                },
+                'console': {
+                    'level': 'INFO',
+                    'formatter': 'standard',
+                    'class': 'logging.StreamHandler',
+                },
+            },
+            'loggers': {
+                '': {
+                    'handlers': ['console', 'file'],
+                    'level': configured_logging.get('level', 'INFO')
+                }
+            }
+        }
+        logging.config.dictConfig(logging_conf)
+
         keyboards = config_data['keyboards']
         selected = config_data.get('selected', next(iter(keyboards.keys())))
         selected_keyboard = keyboards[selected]
@@ -139,6 +142,8 @@ class Application(object):
             if os.path.exists(search_path):
                 file_path = search_path
                 break
+        if file_path is None:
+            raise IOError('Failed to find system path for {}'.format(filename))
         return file_path
 
     @property
